@@ -1,2 +1,9 @@
 .idea
 .DS_Store
+*.pyc
+
+# Dataset Folders
+dataset/
+
+# Cache folders
+vector_cache/
