@@ -1,4 +1,3 @@
-protobuf==3.20.*
 tqdm
 openai
 numpy
@@ -7,7 +6,8 @@ torch
 stanford-corenlp
 sql_metadata
 bpemb
-torchtext
+torchtext==0.17.0
 sentence_transformers
 attrs
 nltk
+stanza

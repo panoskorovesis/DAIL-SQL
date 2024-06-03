@@ -7,7 +7,7 @@ import attr
 import numpy as np
 import torch
 
-from utils.linking_utils import abstract_preproc, corenlp, serialization
+from utils.linking_utils import abstract_preproc, serialization
 from utils.linking_utils.spider_match_utils import (
     compute_schema_linking,
     compute_cell_value_linking,

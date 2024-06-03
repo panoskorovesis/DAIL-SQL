@@ -32,7 +32,7 @@ def schema_linking_producer(test, train, table, db, dataset_dir, compute_cv_link
             source.backup(dest)
         schema.connection = dest
 
-    word_emb = GloVe(kind='42B', lemmatize=True)
+    word_emb = GloVe(kind='42B', lemmatize=True, use_stanza=True)
     linking_processor = SpiderEncoderV2Preproc(dataset_dir,
             min_freq=4,
             max_count=5000,
@@ -107,12 +107,13 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--data_dir", type=str, default="./dataset/spider")
     parser.add_argument("--data_type", type=str, choices=["spider", "bird"], default="spider")
+    parser.add_argument("--language", type=str, choices=["en", "gr"], default="en")
     args = parser.parse_args()
 
     data_type = args.data_type
     if data_type == "spider":
         # merge two training split of Spider
-        spider_dir = args.data_dir
+        spider_dir = args.data_dir + "-" + args.language
         split1 = "train_spider.json"
         split2 = "train_others.json"
         total_train = []

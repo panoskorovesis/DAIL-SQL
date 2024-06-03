@@ -4,12 +4,10 @@ import os
 import time
 
 import bpemb
-import corenlp
 import torch
 import torchtext
 
-from utils.linking_utils import corenlp
-
+import stanza
 
 class Embedder(metaclass=abc.ABCMeta):
 
@@ -41,33 +39,73 @@ class Embedder(metaclass=abc.ABCMeta):
 
 class GloVe(Embedder):
 
-    def __init__(self, kind, lemmatize=False):
+    def __init__(self, kind, lemmatize=False, use_stanza=False, language='en'):
         cache = os.path.join(os.environ.get('CACHE_DIR', os.getcwd()), 'vector_cache')
         self.glove = torchtext.vocab.GloVe(name=kind, cache=cache)
         self.dim = self.glove.dim
         self.vectors = self.glove.vectors
         self.lemmatize = lemmatize
-        self.corenlp_annotators = ['tokenize', 'ssplit']
+        self.stanza = use_stanza
+        self.language = language
+        self.nlp = None
+
+        if not use_stanza:
+            
+            self.corenlp_annotators = ['tokenize', 'ssplit']
+        else:
+            self.stanza_annotators = ['tokenize']
         if lemmatize:
-            self.corenlp_annotators.append('lemma')
+            if not use_stanza:
+                self.corenlp_annotators.append('lemma')
+            else:
+                self.stanza_annotators.append('lemma')
+
+        # In the case of stanza we have to initialize the NLP and download the languages
+        if use_stanza:
+            stanza.download('el')
+            stanza.download('en')
+            self.nlp = stanza.Pipeline(language, use_gpu=False, processors=["tokenize", "lemma"])
 
     @functools.lru_cache(maxsize=1024)
     def tokenize(self, text):
-        ann = corenlp.annotate(text, self.corenlp_annotators)
-        if self.lemmatize:
-            return [tok.lemma.lower() for sent in ann.sentence for tok in sent.token]
+        if not self.stanza:
+            from utils.linking_utils import corenlp
+            ann = corenlp.annotate(text, self.corenlp_annotators)
+            if self.lemmatize:
+                return [tok.lemma.lower() for sent in ann.sentence for tok in sent.token]
+            else:
+                return [tok.word.lower() for sent in ann.sentence for tok in sent.token]
+            
         else:
-            return [tok.word.lower() for sent in ann.sentence for tok in sent.token]
+
+            doc = self.nlp(text, self.stanza_annotators)
+            if self.lemmatize:
+                return [word.lemma.lower() for sent in doc.sentences for word in sent.words]
+            else:
+                [word.text.lower() for sent in doc.sentences for word in sent.words]
+
 
     @functools.lru_cache(maxsize=1024)
     def tokenize_for_copying(self, text):
-        ann = corenlp.annotate(text, self.corenlp_annotators)
-        text_for_copying = [tok.originalText.lower() for sent in ann.sentence for tok in sent.token]
-        if self.lemmatize:
-            text = [tok.lemma.lower() for sent in ann.sentence for tok in sent.token]
+        if not self.stanza:
+            from utils.linking_utils import corenlp
+            ann = corenlp.annotate(text, self.corenlp_annotators)
+            text_for_copying = [tok.originalText.lower() for sent in ann.sentence for tok in sent.token]
+            if self.lemmatize:
+                text = [tok.lemma.lower() for sent in ann.sentence for tok in sent.token]
+            else:
+                text = [tok.word.lower() for sent in ann.sentence for tok in sent.token]
+
         else:
-            text = [tok.word.lower() for sent in ann.sentence for tok in sent.token]
+            doc = self.nlp(text, self.stanza_annotators)
+            text_for_copying = [word.text.lower() for sent in doc.sentences for word in sent.words]
+            if self.lemmatize:
+                text = [word.lemma.lower() for sent in doc.sentences for word in sent.words]
+            else:
+                text = [word.text.lower() for sent in doc.sentences for word in sent.words]
+
         return text, text_for_copying
+
 
     def untokenize(self, tokens):
         return ' '.join(tokens)
