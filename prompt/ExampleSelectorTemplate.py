@@ -205,7 +205,9 @@ class EuclideanDistanceQuestionMaskSelector(BasicExampleSelector):
     def __init__(self, data, *args, **kwargs):
         super().__init__(data)
 
-        self.SELECT_MODEL = "sentence-transformers/all-mpnet-base-v2"
+        self.SELECT_MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+        # self.SELECT_MODEL = "sentence-transformers/all-mpnet-base-v2"
+
         self.mask_token = "<mask>"  # the "<mask>" is the mask token of all-mpnet-base-v2
         self.value_token = "<unk>" # the "<unk>" is the unknown token of all-mpnet-base-v2
 

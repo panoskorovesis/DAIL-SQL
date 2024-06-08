@@ -6,7 +6,17 @@ from utils.linking_utils.application import get_question_pattern_with_schema_lin
 
 
 class BasicDataset(object):
-    def __init__(self, path_data, pre_test_result=None):
+    def __init__(self, path_data, pre_test_result=None, name=None):
+
+        """
+        If a specific name is given, append it to the existing name
+        which is "spider"
+        The name will be either "en" or "gr"
+        This will help us select either the en or the gr version of the dataset
+        """
+        if name is not None:
+            self.name += f'-{name}'
+
         self.path_data = os.path.join(path_data, self.name)
         self.path_db = os.path.join(self.path_data, "database")
         self.test_json = os.path.join(self.path_data, self.test_json)
@@ -238,9 +248,9 @@ class BirdDataset(BasicDataset):
     mini_test_index_json = None
 
 
-def load_data(data_type, path_data, pre_test_result=None):
+def load_data(data_type, path_data, pre_test_result=None, name=None):
     if data_type.lower() == "spider":
-        return SpiderDataset(path_data, pre_test_result)
+        return SpiderDataset(path_data, pre_test_result, name)
     elif data_type.lower() == "realistic":
         return RealisticDataset(path_data, pre_test_result)
     elif data_type.lower() == "bird":

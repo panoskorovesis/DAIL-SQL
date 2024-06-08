@@ -61,11 +61,20 @@ if __name__ == '__main__':
     parser.add_argument("--tokenizer", type=str, default="gpt-3.5-turbo")
     parser.add_argument("--scope_factor", type=int, default=100, help="Times of the searching scope")
     parser.add_argument("--pre_test_result", type=str, default=None)
+    parser.add_argument("--lang", type=str, default="en")
 
+    """ARGS EXAMPLE:
+
+    Namespace(data_type='spider', example_type='QA', k_shot=9, max_ans_len=200, max_seq_len=4096, 
+    pre_test_result=None, prompt_repr='SQL', 
+    scope_factor=100, 
+    selector_type='EUCDISQUESTIONMASK', 
+    split='test', tokenizer='gpt-3.5-turbo')
+    """
     args = parser.parse_args()
 
     # load test dataset here
-    data = load_data(args.data_type, PATH_DATA, args.pre_test_result)
+    data = load_data(args.data_type, PATH_DATA, args.pre_test_result, args.lang)
 
     # Read all tables into a dict
     databases = data.get_databases()
