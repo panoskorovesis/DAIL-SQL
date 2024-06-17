@@ -24,6 +24,7 @@ if __name__ == '__main__':
                                                       LLM.GPT_35_TURBO_0613,
                                                       # LLM.TONG_YI_QIAN_WEN,
                                                       LLM.GPT_35_TURBO_16K,
+                                                      LLM.GPT_35_TURBO_1,
                                                       LLM.GPT_4],
                         default=LLM.GPT_35_TURBO)
     parser.add_argument("--start_index", type=int, default=0)
@@ -69,6 +70,11 @@ if __name__ == '__main__':
             if i >= args.end_index:
                 break
             try:
+                # res: dict_keys(['response', 'completion_tokens', 'prompt_tokens', 'total_tokens'])
+                # len(res['response']) = 1
+                # The n corresponds to how many times the model will answer the given question
+                # By default n == 5
+                # len(res['response'][0]) = n
                 res = ask_llm(args.model, batch, args.temperature, args.n)
             except openai.error.InvalidRequestError:
                 print(f"The {i}-th question has too much tokens! Return \"SELECT\" instead")

@@ -13,7 +13,11 @@ def init_chatgpt(OPENAI_API_KEY, OPENAI_GROUP_ID, model):
     #     openai.api_key = OPENAI_API_KEY
     #     openai.organization = OPENAI_GROUP_ID
     openai.api_key = OPENAI_API_KEY
-    openai.organization = OPENAI_GROUP_ID
+    openai.api_base = 'https://pta-nbg-poc1.openai.azure.com/'
+    openai.api_type = 'azure'
+    openai.api_version = '2023-03-15-preview'
+
+    # openai.organization = OPENAI_GROUP_ID
 
 
 def ask_completion(model, batch, temperature):
@@ -37,6 +41,7 @@ def ask_completion(model, batch, temperature):
 def ask_chat(model, messages: list, temperature, n):
     response = openai.ChatCompletion.create(
         model=model,
+        engine=model,
         messages=messages,
         temperature=temperature,
         max_tokens=200,

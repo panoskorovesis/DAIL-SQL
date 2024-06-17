@@ -50,6 +50,7 @@ class LLM:
     GPT_35_TURBO_0613 = "gpt-3.5-turbo-0613"
     GPT_35_TURBO_16K = "gpt-3.5-turbo-16k"
     GPT_35_TURBO_0301 = "gpt-3.5-turbo-0301"
+    GPT_35_TURBO_1 = "got-35-turbo1"
     GPT_4 = "gpt-4"
 
     # LLMs that use openai completion api
@@ -64,6 +65,7 @@ class LLM:
         GPT_35_TURBO_0613,
         GPT_35_TURBO_16K,
         GPT_35_TURBO_0301,
+        GPT_35_TURBO_1,
         GPT_4
     ]
 
