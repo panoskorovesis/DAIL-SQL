@@ -214,6 +214,16 @@ def get_exec_output(
 def get_sqls(results, select_number, db_dir):
     db_ids = []
     all_p_sqls = []
+    """
+    Keep only select_number (n) produced sqls
+    along with their dbs
+    ONE db is added per n sqls
+    For most cases:
+    len(db_ids) == 1
+    n = 5 : 
+        len(all_p_sqls) == 1
+        len(all_p_sqls[0]) == n
+    """
     for item in results:
         p_sqls = []
         db_ids.append(item['db_id'])
