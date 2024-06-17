@@ -132,7 +132,7 @@ if __name__ == '__main__':
         "questions": questions
     }
     
-    path_generate = f"dataset/process/{args.data_type.upper()}-{args.split.upper()}_{prompt.name}_CTX-{args.max_ans_len}_ANS-{args.max_seq_len}"
+    path_generate = f"dataset/process/{args.lang}/{args.data_type.upper()}-{args.split.upper()}_{prompt.name}_CTX-{args.max_ans_len}_ANS-{args.max_seq_len}"
         
     os.makedirs(path_generate, exist_ok=True)
     json.dump(task, open(os.path.join(path_generate, "questions.json"), "w"), indent=4)
